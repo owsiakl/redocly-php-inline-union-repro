@@ -1,0 +1,54 @@
+openapi: 3.1.0
+info:
+  title: Inline union repro
+  version: 1.0.0
+servers:
+  - url: http://127.0.0.1:8099
+paths:
+  /pets:
+    post:
+      operationId: PostPet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+components:
+  schemas:
+    Pet:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        owner:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/PersonOwner'
+            - $ref: '#/components/schemas/ShelterOwner'
+    PersonOwner:
+      type: object
+      required: [kind, name]
+      properties:
+        kind:
+          type: string
+          enum: [person]
+        name:
+          type: string
+    ShelterOwner:
+      type: object
+      required: [kind, shelterId]
+      properties:
+        kind:
+          type: string
+          enum: [shelter]
+        shelterId:
+          type: string
